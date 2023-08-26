@@ -4,28 +4,28 @@ inputs:
   secrets:
     description: 'Expose secrets'
     required: false
-    default: false
+    default: true
   vars:
     description: 'Expose variables'
     required: false
-    default: false
+    default: true
 runs:
   using: 'composite'
   steps:
     - name: Exposing github vars as shell variables
-      if: ${{ inputs.vars }}
+      if: ${{ env.vars }}
       shell: bash
       env:
-        MYSECRET: ${{ toJson(inputs.vars) }}
+        MYSECRET: ${{ toJson(env.vars) }}
       run: |
         EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
         echo "$MYVARS" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
 
     - name: Exposing github secrets as shell variables
-      if: ${{ inputs.secrets }}
+      if: ${{ env.secrets }}
       shell: bash
       env:
-        MYSECRET: ${{ toJson(inputs.secrets) }}
+        MYSECRET: ${{ toJson(env.secrets) }}
       run: |
         EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
         echo "$MYSECRET" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
