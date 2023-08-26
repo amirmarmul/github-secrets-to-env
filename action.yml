@@ -16,17 +16,19 @@ runs:
       if: ${{ inputs.vars == 'true' }}
       shell: bash
       env:
-        MYVARS: ${{ toJson(vars) }}
-      run: |
-        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-        echo "$MYVARS" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
+        MYVARS: ${{ toJson(vars.HELLO) }}
+      run: echo "$MYVARS"
+      # run: |
+      #   EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+      #   echo "$MYVARS" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
 
     - name: Exposing github secrets as shell variables
       if: ${{ inputs.secrets == 'true' }}
       shell: bash
       env:
-        MYSECRET: ${{ toJson(secrets) }}
-      run: |
-        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-        echo "$MYSECRET" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
+        MYSECRET: ${{ toJson(secrets.FOO) }}
+      run: echo "$MYSECRET"
+      # run: |
+      #   EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+      #   echo "$MYSECRET" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
       
