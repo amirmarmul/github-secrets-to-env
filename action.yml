@@ -1,11 +1,11 @@
 name: Github secrets to env
 description: Expose github secrets and vars as shell variables
 inputs:
-  secrets_:
+  secrets:
     description: 'Expose secrets'
     required: false
     default: false
-  vars_:
+  vars:
     description: 'Expose variables'
     required: false
     default: true
@@ -13,7 +13,7 @@ runs:
   using: 'composite'
   steps:
     - name: Exposing github vars as shell variables
-      if: ${{ inputs.vars_ == 'true' }}
+      if: ${{ inputs.vars == 'true' }}
       shell: bash
       env:
         MYVARS: ${{ toJson(vars) }}
@@ -22,7 +22,7 @@ runs:
         echo "$MYVARS" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
 
     - name: Exposing github secrets as shell variables
-      if: ${{ inputs.secrets_ == 'true' }}
+      if: ${{ inputs.secrets == 'true' }}
       shell: bash
       env:
         MYSECRET: ${{ toJson(secrets) }}
