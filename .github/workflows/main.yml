@@ -6,8 +6,11 @@ jobs:
     name: A job to expose secrets and vars
     steps: 
       - uses: actions/checkout@v3
-      - uses: ./
+      - shell: bash
         env:
-          vars: ${{ vars }}
-          secrets: ${{ secrets }}
-      - run: echo $FOO
+          MYSECRET: ${{ toJson(secrets) }}
+        run: |
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "$MYSECRET" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
+      - shell: bash
+        run: echo $FOO
