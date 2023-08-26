@@ -8,27 +8,25 @@ inputs:
   vars:
     description: 'Expose variables'
     required: false
-    default: true
+    default: false
 runs:
   using: 'composite'
   steps:
     - name: Exposing github vars as shell variables
-      if: ${{ inputs.vars == 'true' }}
+      if: ${{ inputs.vars }}
       shell: bash
       env:
-        MYVARS: ${{ vars.HELLO }}
-      run: echo "$MYVARS"
-      # run: |
-      #   EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-      #   echo "$MYVARS" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
+        MYSECRET: ${{ toJson(inputs.vars) }}
+      run: |
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "$MYVARS" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
 
     - name: Exposing github secrets as shell variables
-      if: ${{ inputs.secrets == 'true' }}
+      if: ${{ inputs.secrets }}
       shell: bash
       env:
-        MYSECRET: ${{ secrets.FOO }}
-      run: echo "$MYSECRET"
-      # run: |
-      #   EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-      #   echo "$MYSECRET" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
+        MYSECRET: ${{ toJson(inputs.secrets) }}
+      run: |
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "$MYSECRET" | jq -r 'to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""' >> $GITHUB_ENV
       
