@@ -1,0 +1,12 @@
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest 
+    name: A job to expose secrets and vars
+    steps: 
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          vars: true
+      - run: echo $HELLO
